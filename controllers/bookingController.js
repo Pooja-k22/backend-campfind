@@ -54,8 +54,8 @@ exports.bookingCampController = async (req, res) => {
       ],
       mode: "payment",
       success_url:
-        "http://localhost:5173/payment-success",
-      cancel_url: "http://localhost:5173/payment-errorr",
+        "https://campfind-frontend.vercel.app/payment-success",
+      cancel_url: "https://campfind-frontend.vercel.app/payment-errorr",
       metadata: {
         userId,
         campId,
