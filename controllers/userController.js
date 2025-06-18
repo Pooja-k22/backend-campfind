@@ -112,11 +112,14 @@ exports.WishlistControlller = async (req, res) => {
       // remove it
       user.wishlist = user.wishlist.filter((id) => id !== campId);
       await user.save();
-      res.status(200).json({ wishlist: user.wishlist });
+      res.status(200).json({  isWishlisted: false,
+        wishlist: user.wishlist,
+        });
     } else {
       user.wishlist.push(campId);
       await user.save();
-      res.status(200).json({ wishlist: user.wishlist });
+      res.status(200).json({ isWishlisted: true,
+        wishlist: user.wishlist, });
     }
   } catch (error) {
     res.status(500).json(error);
