@@ -5,6 +5,7 @@ const userController = require('./controllers/userController')
 const campSpotController = require('./controllers/campSpotController')
 const bookingController = require('./controllers/bookingController')
 const reviewController = require('./controllers/reviewController')
+const blogController = require('./controllers/blogController')
 
 // middleware
 const jwtMiddleware = require('./middleware/jwtMiddleware')
@@ -80,6 +81,13 @@ route.post('/add-review',jwtMiddleware,reviewController.addreviewController)
 
 // get review
 route.get('/get-review/:campId',reviewController.getReviewController)
+
+// add blog
+route.post('/add-blog',jwtMiddleware,blogController.addBlogController)
+
+
+// get blog
+route.get('/get-blog',blogController.getBlogController)
 
 
 // ----------------------------------------------------------ADMIN_-----------------------------------------------------------------------
