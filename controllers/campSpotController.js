@@ -60,7 +60,7 @@ exports.campSpotAddController = async (req, res) => {
   }
 };
 
-// get camp
+// get camp home
 exports.getAllHomeCampController = async (req, res) => {
   try {
     const allHomeCamp = await campSpots.find().sort({ _id: -1 }).limit(4);
@@ -90,7 +90,7 @@ exports.getAllCampController = async (req, res) => {
     res.status(200).json(allCamp);
   } catch (error) {
     res.status(500).json(error);
-  }
+  } 
 };
 
 // get particular camp

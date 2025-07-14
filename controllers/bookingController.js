@@ -6,24 +6,18 @@ const stripe = require("stripe")(process.env.STRIPEKEY);
 
 // booking
 exports.bookingCampController = async (req, res) => {
-  const { campId, checkInDate, numberOfGuests, totalPrice } =
-    req.body;
+  const { campId, checkInDate, numberOfGuests, totalPrice } = req.body;
   console.log(campId, checkInDate, numberOfGuests, totalPrice);
 
   const userId = req.payload.userId;
   console.log(userId);
-  
-  
-  
 
   try {
     const camp = await campSpots.findById(campId);
     console.log(camp);
 
-    const hostMail= camp.userMail
+    const hostMail = camp.userMail;
     console.log(hostMail);
-    
-    
 
     // Step 2.1: Create booking document first (
     const newBooking = new bookings({
@@ -31,7 +25,7 @@ exports.bookingCampController = async (req, res) => {
       campId,
       hostMail,
       checkInDate,
-     numberOfGuests,
+      numberOfGuests,
       totalPrice,
     });
     await newBooking.save();
@@ -53,12 +47,11 @@ exports.bookingCampController = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url:
-        "http://localhost:5173/payment-success",
-      cancel_url: "http://localhost:5173/payment-errorr",
       // success_url:
-      //   "https://campfind-frontend.vercel.app/payment-success",
-      // cancel_url: "https://campfind-frontend.vercel.app/payment-errorr",
+      //   "http://localhost:5173/payment-success",
+      // cancel_url: "http://localhost:5173/payment-errorr",
+      success_url: "https://campfind-frontend.vercel.app/payment-success",
+      cancel_url: "https://campfind-frontend.vercel.app/payment-errorr",
       metadata: {
         userId,
         campId,
@@ -74,44 +67,39 @@ exports.bookingCampController = async (req, res) => {
   }
 };
 
-
 // get user booking
-exports.getUserBookingController= async(req,res)=>{
+exports.getUserBookingController = async (req, res) => {
+  const userId = req.payload.userId;
 
-    const userId = req.payload.userId
+  try {
+    const userBookings = await bookings.find({ userId }).populate("campId");
 
-    try {
+    res.status(200).json(userBookings);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
 
-        const userBookings = await bookings.find({userId}).populate('campId')
-
-        res.status(200).json(userBookings)
-        
-    } catch (error) {
-         res.status(500).json(error)
-    }
-}
-
-
-// get reservation list 
-exports.getReservationListController=async(req,res)=>{
-  const userMail = req.payload.userMail
+// get reservation list
+exports.getReservationListController = async (req, res) => {
+  const userMail = req.payload.userMail;
   console.log(userMail);
 
   try {
-    
-    const reservation = await bookings.find({hostMail :userMail}).populate('campId').populate('userId')
-    res.status(200).json(reservation)
+    const reservation = await bookings
+      .find({ hostMail: userMail })
+      .populate("campId")
+      .populate("userId");
+    res.status(200).json(reservation);
   } catch (error) {
-      res.status(500).json(error);
+    res.status(500).json(error);
   }
-  
-}
+};
 
 // Check capacity on a specific date
 exports.checkCampCapacityController = async (req, res) => {
   const { campId, date, guests } = req.query;
 
-  console.log("Received =>", { campId, date, guests });
 
   const selectedDate = new Date(date);
   selectedDate.setHours(0, 0, 0, 0);
@@ -139,16 +127,10 @@ exports.checkCampCapacityController = async (req, res) => {
 
     const camp = await campSpots.findById(campId);
 
-    if (!camp) {
-      console.log("Camp not found");
-      return res.status(404).json({ error: "Camp not found" });
-    }
-
     const requestedGuests = Number(guests);
     const isFull = totalGuests + requestedGuests > camp.maxGuest;
 
-    console.log("Requested:", requestedGuests);
-    console.log("Max allowed:", camp.maxGuest);
+   
     console.log("Total after request:", totalGuests + requestedGuests);
     console.log("Is full:", isFull);
 
@@ -164,15 +146,11 @@ exports.checkCampCapacityController = async (req, res) => {
 };
 
 // get all bookings
-exports.getAllBookingsController = async(req,res)=>{
+exports.getAllBookingsController = async (req, res) => {
   try {
-    const booking = await bookings.find().populate('userId').populate('campId')
-    res.status(200).json(booking)
-    
+    const booking = await bookings.find().populate("userId").populate("campId");
+    res.status(200).json(booking);
   } catch (error) {
-    res.status(200).json(error)
-    
+    res.status(200).json(error);
   }
-}
-
-
+};
